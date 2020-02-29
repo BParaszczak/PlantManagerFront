@@ -1,0 +1,15 @@
+dl {
+    text-align: left;
+}
+
+dt {
+    color: #da9733;
+}
+
+dt:last-of-type {
+    visibility: hidden;
+}
+
+dd:last-child {
+    visibility: hidden;
+}

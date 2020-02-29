@@ -32,7 +32,23 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
+}
+
+.random-text {
+  color: darkred;
+}
+
+.NewComponents {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.NewComponents dl,
+.NewComponents ul {
+  margin-left: 100px;
 }

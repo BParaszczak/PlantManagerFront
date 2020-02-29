@@ -1,0 +1,9 @@
+li {
+    list-style: circle;
+    text-align: left;
+    line-height: 2.3;
+}
+
+li:first-child {
+    color: red
+}
