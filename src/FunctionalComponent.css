@@ -7,3 +7,11 @@ li {
 li:first-child {
     color: red
 }
+
+/* li {
+    color: red;
+}
+
+li>li+li {
+    color: black;
+} */

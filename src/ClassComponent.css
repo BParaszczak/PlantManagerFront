@@ -6,10 +6,7 @@ dt {
     color: #da9733;
 }
 
-dt:last-of-type {
-    visibility: hidden;
-}
-
+dt:last-of-type,
 dd:last-child {
     visibility: hidden;
 }
