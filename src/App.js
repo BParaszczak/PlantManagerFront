@@ -15,22 +15,58 @@ class App extends React.PureComponent {
     this.state = {
       categories: [],
       plants: [],
-      successCategories: true,
-      successPlants: true,
+      successCategories: undefined,
+      successPlants: undefined,
+      inProgressCategories: true,
+      inProgressPlants: true,
       inProgress: true,
-
     };
   }
+  // ZADANIE 5
+  // componentDidMount() {
+  //   Promise.allSettled([this.fetchCategories(), this.fetchPlants()]).then(progress => { return this.setState({ inProgress: false }) });
+  // }
 
   componentDidMount() {
-    Promise.allSettled([this.fetchCategories(), this.fetchPlants()]).then(progress => { return this.setState({ inProgress: false }) });
+    const allPromises = Promise.allSettled([
+      this.fetchPlants(),
+      this.fetchCategories(),
+    ]);
+
+    const stopProgress = () => {
+      this.setState({ inProgress: false });
+    };
+
+    allPromises
+      .then(stopProgress)
+      .catch(stopProgress);
   }
+
+  // componentDidMount() {
+  //   const allPromises = Promise.all([
+  //     this.fetchPlants(),
+  //     this.fetchCategories(),
+  //   ]);
+
+  //   const stopProgress = () => {
+  //     this.setState({ inProgress: false };)
+  //   };
+
+  //   allPromises
+  //     .finally(() => {        //tu przekazujemy funkcję, która ma się wykonać niezależnie od wyniku rozstrzygnięcia
+  //          console.log(resolve);
+  //     });
+  // }
+
 
 
   // ZADANIE 4.
   // componentDidUpdate(prevState) {
-  //   if (prevState.inProgress !== this.state.inProgress) {
-  //     return false;
+  //   const { inProgressCategories, inProgressPlants } = this.state;
+  //   if (prevState.inProgressCategories !== inProgressCategories ||
+  //     prevState.inProgressCategories !== inProgressCategories) {
+  //     const inProgress = inProgressCategories || inProgressPlants;
+  //     this.setState({ inProgress });
   //   };
   // }
 
@@ -39,20 +75,21 @@ class App extends React.PureComponent {
   }
 
   fetchCategories() {
-    const requestUrl = 'http://gentle-tor-07382.sherokuapp.com/categories/';
+    const requestUrl = 'http://gentle-tor-07382.herokuapp.com/categories/';
 
     return this.delayFetch(CATEGORIES_FETCH_DELAY, (resolve, reject) => {
       axios.get(requestUrl)
         .then((response) => {
           const data = response.data;
           const categories = data.map((item) => item.name);
-          this.setState({ categories });
-          // this.setState({ inProgress: false });
+          const successCategories = true;
+          this.setState({ categories, successCategories });
+          this.setState({ inProgressCategories: false });
           resolve();
         })
         .catch((error) => {
           this.setState({ successCategories: false });
-          // this.setState({ inProgress: false });                     // do zadania 4.
+          this.setState({ inProgressCategories: false });                     // do zadania 4.
           reject();
         });
     });
@@ -66,69 +103,72 @@ class App extends React.PureComponent {
         .then((response) => {
           const data = response.data;
           const plants = data.map((item) => item.name);
-          this.setState({ plants });
-          // this.setState({ inProgress: false });
+          const successPlants = true;
+          this.setState({ plants, successPlants });
+          this.setState({ inProgressPlants: false });
           resolve();
         })
         .catch((error) => {
           this.setState({ successPlants: false });
-          // this.setState({ inProgress: false });                       //do ZADANIA 4.
+          this.setState({ inProgressPlants: false });                       //do ZADANIA 4.
           reject();
         });
     });
   }
 
   render() {
-    const categories = this.state.categories;
-    const plants = this.state.plants;
+    const {
+      categories: [],
+      plants: [],
+      successCategories,
+      successPlants,
+      inProgress,
+      inProgressCategories,
+      inProgressPlants,
+    } = this.state;
+    // const inProgress = inProgressCategories || inProgressPlants;
 
     return (
       <React.Fragment>
         <div className="app-container">
-          {/* ZADANIE 3. */}
+          {/* ZADANIE 3.
           {
-            ((categories.length === 0 || this.state.inProgress)
-              || (plants.length === 0 || this.state.inProgress)) &&
-            <p>Trwa ładowanie danych...</p>
-          } */}
+            inProgress &&
+            <p>Trwa ładownie kategorii...</p>
+          }
+          
           {/* ZADANIE 4. */}
           {/* {
-            this.state.inProgress && this.componentDidUpdate &&
+            inProgress && componentDidUpdate &&
             <p>Trwa ładowanie danych...</p>
           } */}
 
-          {/* ZADANIE 2.
-          {
-            categories.length === 0 && this.state.successCategories &&
-            <p>Trwa ładownie kategorii...</p>
-          }
-          {
-            plants.length === 0 && this.state.successPlants &&
-            <p>Trwa ładownie kwiatów...</p>
-          }  */}
+          {/* {ZADANIE 2. */}
+
+
           {/* ZADANIE 5. */}
-          {
-            this.state.inProgress &&
+          {/* {
+            inProgress &&
             <div class="spinner-border" role="status">
               <Spinner>
                 <span className="sr-only">Trwa ładowanie danych...</span>
               </Spinner>
             </div>
-          }
+          } */}
 
           {
-            !this.state.successCategories &&
+            !successCategories &&
             <p>Nie udało się pobrać Kategorii</p>
           }
           {
-            !this.state.successPlants &&
+            !successPlants &&
             <p>Nie udało się pobrać Kwiatow</p>
           }
           {
-            this.state.successPlants && (!this.state.inProgress && plants.length !== 0) && //ZADANIE 1.
+            successPlants && !inProgress && //ZADANIE 1.
             <div className="plants">
               {
-                plants.map((plant, index, arr) =>
+                this.plants.map((plant, index, arr) =>
                   <Plant
                     name={plant}
                     key={index}
@@ -138,10 +178,10 @@ class App extends React.PureComponent {
             </div>
           }
           {
-            this.state.successCategories && (!this.state.inProgress && categories.length !== 0) && //ZADANIE 1.
+            successCategories && !inProgress && //ZADANIE 1.
             <div className="categories">
               {
-                categories.map((item, index, arr) =>
+                this.categories.map((item, index, arr) =>
                   <CategoryItem
                     category={item}
                     label='category'
