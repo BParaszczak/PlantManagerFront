@@ -2,13 +2,30 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './CategoryItem.css';
 
+
 class CategoryItem extends React.PureComponent {
 
     constructor(props) {
         super(props);
         this.state = {
-            className: 'category-item'    //to jest stan początkowy
+            className: 'category-item active-0',    //to jest stan początkowy
+            index: 0
         };
+    }
+
+    componentDidMount() { //metoda wywoływana przy wstawieniu komponentu do drzewa DOM
+
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) { //ta metoda wywoływana jest przy każdej zmianie state; pokazuje w konsoli co się zmieniło w stacie
+        const index = this.state.index;
+        if (prevState.index !== this.state.index) {
+            console.log(`Index has changed from ${prevState.index} to ${index}`);
+            let className = `category-item active-${index}`;
+            this.setState({ className })
+        } else {
+            console.log('Some other state has changed');
+        }
     }
 
     render() {
@@ -19,10 +36,26 @@ class CategoryItem extends React.PureComponent {
         // const onClick = () => {
         //     self.setState({ className: 'category-item active' });
         // }
-
+        //---------------------------------------------------------------------
         const onClick = () => {
-            this.setState({ className: 'category-item active' });
-        }
+            if (this.props.isLastItem === true) {
+                let index = this.state.index;
+                let className = 'category-item active-' + index;
+                index = ++index === 4 ? 0 : index;
+                this.setState({ className, index })
+            }
+        };
+        //--------------------------------------------------------------------------
+        // if (this.props.isLastItem === false) {
+        //     return;
+        // } else { }
+        // let cycleIndex = this.state.cycleIndex;
+        // cycleIndex++;
+        // cycleIndex = cycleIndex === MAX_CYCLE_COLORS ? 0 : cycleIndex;
+        // let className = this.getItemClassName(cycleIndex);
+        // this.setState({ className: cycleIndex })
+
+
 
         // function onClick() {
         //     self.setState({ className: 'category-item active' });
@@ -44,6 +77,7 @@ CategoryItem.propTypes = { //w tym miejscu przypisujemy pole klasie (nie obiekto
     //tu listujemy wszystkie propsy, które należy lub można przekazać do komponentu; {} pusty obiekt
     category: PropTypes.string.isRequired,
     categoryLabel: PropTypes.string,
+    isLastItem: PropTypes.bool.isRequired,
 };
 
 export default CategoryItem;

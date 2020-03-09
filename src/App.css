@@ -1,8 +1,19 @@
 body {
-  background: #b8e2a4;
-
+  background: #B8EEB3;
+  padding: 1rem;
 }
 
-.app-container {
-  padding: 1rem;
+
+.app-container {}
+
+.plants,
+.categories {
+  border: 1px solid #444;
+  padding: 1em;
+  margin-top: 1em;
+}
+
+.spinner-border {
+  margin: 1em 6em;
+  color: #444;
 }
