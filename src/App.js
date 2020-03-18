@@ -1,9 +1,10 @@
 import React from 'react';
 import './App.css';
 import axios from 'axios';
+import { Input, Label, Button } from 'reactstrap';
 import CategoryItem from './components/categories/CategoryItem';
 import Plant from './components/plants/Plant';
-import Spinner from 'react-bootstrap/Spinner';
+import CreatePlantForm from './components/plants/CreatePlantForm';
 
 const CATEGORIES_FETCH_DELAY = 4000;
 const PLANTS_FETCH_DELAY = 2000;
@@ -11,64 +12,32 @@ const PLANTS_FETCH_DELAY = 2000;
 class App extends React.PureComponent {
 
   constructor(props) {
+    console.log('constructor');
     super(props);
     this.state = {
       categories: [],
       plants: [],
       successCategories: undefined,
       successPlants: undefined,
-      inProgressCategories: true,
-      inProgressPlants: true,
       inProgress: true,
+      value: '',
     };
   }
-  // ZADANIE 5
-  // componentDidMount() {
-  //   Promise.allSettled([this.fetchCategories(), this.fetchPlants()]).then(progress => { return this.setState({ inProgress: false }) });
-  // }
 
   componentDidMount() {
-    const allPromises = Promise.allSettled([
-      this.fetchPlants(),
-      this.fetchCategories(),
-    ]);
+    console.log('componentDidMount');
 
     const stopProgress = () => {
+      console.log('stopProgress');
       this.setState({ inProgress: false });
     };
 
-    allPromises
-      .then(stopProgress)
-      .catch(stopProgress);
+    const allPromises = Promise.allSettled([
+      this.fetchCategories(),
+      this.fetchPlants()
+    ]).then(stopProgress);
+
   }
-
-  // componentDidMount() {
-  //   const allPromises = Promise.all([
-  //     this.fetchPlants(),
-  //     this.fetchCategories(),
-  //   ]);
-
-  //   const stopProgress = () => {
-  //     this.setState({ inProgress: false };)
-  //   };
-
-  //   allPromises
-  //     .finally(() => {        //tu przekazujemy funkcję, która ma się wykonać niezależnie od wyniku rozstrzygnięcia
-  //          console.log(resolve);
-  //     });
-  // }
-
-
-
-  // ZADANIE 4.
-  // componentDidUpdate(prevState) {
-  //   const { inProgressCategories, inProgressPlants } = this.state;
-  //   if (prevState.inProgressCategories !== inProgressCategories ||
-  //     prevState.inProgressCategories !== inProgressCategories) {
-  //     const inProgress = inProgressCategories || inProgressPlants;
-  //     this.setState({ inProgress });
-  //   };
-  // }
 
   delayFetch(ms, method) {
     return new Promise((resolve, reject) => setTimeout(() => method(resolve, reject), ms));
@@ -84,13 +53,14 @@ class App extends React.PureComponent {
           const categories = data.map((item) => item.name);
           const successCategories = true;
           this.setState({ categories, successCategories });
-          this.setState({ inProgressCategories: false });
           resolve();
         })
         .catch((error) => {
           this.setState({ successCategories: false });
-          this.setState({ inProgressCategories: false });                     // do zadania 4.
           reject();
+        })
+        .finally(() => {
+          console.log('Resolved');
         });
     });
   }
@@ -105,70 +75,62 @@ class App extends React.PureComponent {
           const plants = data.map((item) => item.name);
           const successPlants = true;
           this.setState({ plants, successPlants });
-          this.setState({ inProgressPlants: false });
           resolve();
         })
         .catch((error) => {
           this.setState({ successPlants: false });
-          this.setState({ inProgressPlants: false });                       //do ZADANIA 4.
           reject();
         });
     });
   }
 
+  inputOnChange = (event) => {
+    this.setState({ value: event.currentTarget.value });
+  };
+
   render() {
     const {
-      categories: [],
-      plants: [],
+      categories,
+      plants,
+      inProgress,
       successCategories,
       successPlants,
-      inProgress,
-      inProgressCategories,
-      inProgressPlants,
+      value,
     } = this.state;
-    // const inProgress = inProgressCategories || inProgressPlants;
 
+    console.log('render');
+    // react nie aktualizuje strony automatycznie po wypełnieniu forma
     return (
       <React.Fragment>
+        <form method="POST" action="">
+          <Label>Test</Label>
+          <Input
+            type="text"
+            value={value}
+            onChange={this.inputOnChange} //można sprawdzać wartość wpisywaną przez użytkownika w locie, przed zatwierdzeniem
+          />
+          <Button type="submit">Wyślij formularz</Button>
+        </form>
+        <div className="create-plant-form">
+          <CreatePlantForm />
+        </div>
         <div className="app-container">
-          {/* ZADANIE 3.
           {
-            inProgress &&
-            <p>Trwa ładownie kategorii...</p>
+            inProgress && <p>Loading data...</p>
           }
-          
-          {/* ZADANIE 4. */}
-          {/* {
-            inProgress && componentDidUpdate &&
-            <p>Trwa ładowanie danych...</p>
-          } */}
-
-          {/* {ZADANIE 2. */}
-
-
-          {/* ZADANIE 5. */}
-          {/* {
-            inProgress &&
-            <div class="spinner-border" role="status">
-              <Spinner>
-                <span className="sr-only">Trwa ładowanie danych...</span>
-              </Spinner>
-            </div>
-          } */}
-
           {
-            !successCategories &&
+            successCategories === false &&
             <p>Nie udało się pobrać Kategorii</p>
           }
           {
-            !successPlants &&
+            successPlants === false &&
             <p>Nie udało się pobrać Kwiatow</p>
           }
           {
-            successPlants && !inProgress && //ZADANIE 1.
+            successPlants &&
             <div className="plants">
               {
-                this.plants.map((plant, index, arr) =>
+                plants.map((plant, index, arr) =>
                   <Plant
                     name={plant}
                     key={index}
@@ -178,10 +140,10 @@ class App extends React.PureComponent {
             </div>
           }
           {
-            successCategories && !inProgress && //ZADANIE 1.
+            successCategories &&
             <div className="categories">
               {
-                this.categories.map((item, index, arr) =>
+                categories.map((item, index, arr) =>
                   <CategoryItem
                     category={item}
                     label='category'
@@ -194,13 +156,10 @@ class App extends React.PureComponent {
             </div>
           }
         </div>
-      </React.Fragment >
+      </React.Fragment>
     )
   }
 }
 
 
 export default App;
-
-
-

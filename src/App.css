@@ -17,3 +17,7 @@ body {
   margin: 1em 6em;
   color: #444;
 }
+
+Input {
+  margin: 1em 0;
+}
