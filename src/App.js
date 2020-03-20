@@ -88,6 +88,8 @@ class App extends React.PureComponent {
     this.setState({ value: event.currentTarget.value });
   };
 
+
+
   render() {
     const {
       categories,

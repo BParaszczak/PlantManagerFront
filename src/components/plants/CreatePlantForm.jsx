@@ -1,14 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Input, Label, Button, Checkbox } from 'reactstrap';
-import Select from 'react-select';
+import Select, { components } from 'react-select';
 import "./CreatePlantForm.css";
+
 
 class CreatePlantForm extends React.PureComponent {
 
     constructor(props) {
         super(props);
         this.state = {
+            className: 'nonPalindrom',
             name: '',
             category: '',
             room: '',
@@ -21,27 +23,81 @@ class CreatePlantForm extends React.PureComponent {
             difficulty: '',
             lastWatered: '',
             lastFertilized: '',
+            requiredExposureOptions: [
+                { value: 'dark', label: 'Dark' },
+                { value: 'shade', label: 'Shade' },
+                { value: 'partsun', label: 'Part sun' },
+                { value: 'sunny', label: 'Sunny' },
+            ],
+            requiredTemperatureOptions: [
+                { value: 'cold', label: 'Cold' },
+                { value: 'medium', label: 'Medium' },
+                { value: 'warm', label: 'Warm' },
+            ],
+            requiredHumidityOptions: [
+                { value: 'low', label: 'Low' },
+                { value: 'medium', label: 'Medium' },
+                { value: 'high', label: 'High' },
+            ],
+            difficultyLevel: [
+                { value: 'low', label: 'Low' },
+                { value: 'medium-low', label: 'Medium-low' },
+                { value: 'medium', label: 'Medium' },
+                { value: 'medium-high', label: 'Medium-high' },
+                { value: 'high', label: 'High' },
+            ],
 
         }
     }
 
-    inputOnChange = (event) => {
-        this.setState(
-            { name: event.currentTarget.name },
-            { category: event.currentTarget.category },
-            { room: event.currentTarget.room },
-            { wateringInterval: event.currentTarget.wateringInterval },
-            { fertilizingInterval: event.currentTarget.fertilizingInterval },
-            { requiredExposure: event.currentTarget.requiredExposure },
-            { requiredTemperature: event.currentTarget.requiredTemperature },
-            { requiredHumidity: event.currentTarget.requiredHumidity },
-            { blooming: event.currentTarget.blooming },
-            { difficulty: event.currentTarget.difficulty },
-            { lastWatered: event.currentTarget.lastWatered },
-            { lastFertilized: event.currentTarget.lastFertilized },
+    handleInputChange = (event) => {
+        const { target: { name, value } } = event;
+        this.setState({ [name]: value });
+    }
 
-        );
-    };
+    handleSelectChange = (event) => {
+        const { target: { name, options } } = event;
+        this.setState({ [name]: options });
+    }
+
+    // inputOnChange = (event) => {
+    //     this.setState({
+    //         name: event.currentTarget.name,
+    //         category: event.currentTarget.category,
+    //         room: event.currentTarget.room,
+    //         wateringInterval: event.currentTarget.wateringInterval,
+    //         fertilizingInterval: event.currentTarget.fertilizingInterval,
+    //         requiredExposure: event.currentTarget.requiredExposure,
+    //         requiredTemperature: event.currentTarget.requiredTemperature,
+    //         requiredHumidity: event.currentTarget.requiredHumidity,
+    //         blooming: event.currentTarget.blooming,
+    //         difficulty: event.currentTarget.difficulty,
+    //         lastWatered: event.currentTarget.lastWatered,
+    //         lastFertilized: event.currentTarget.lastFertilized,
+    //         requiredExposureOptions: event.currentTarget.requiredExposureOptions,
+    //         requiredTemperatureOptions: event.currentTarget.requiredTemperatureOptions,
+    //         requiredHumidityOptions: event.currentTarget.requiredHumidityOptions,
+    //         difficultyLevel: event.currentTarget.difficultyLevel,
+    //     });
+    //     this.handleInputChange();
+    // };
+
+    // isPalindrom = (value) => {
+    //     // value = this.value.replace(/\s+/g, "");
+    //     // value = this.value.toLowerCase();
+    //     // value = this.value.split('');
+
+    //     for (let i = 0; i < this.value.length; i++) {
+    //         if (this.value[i] !== [this.value.length - (i + 1)]) {
+    //             return false;
+    //         } else {
+    //             let className = 'is-palindrom';
+    //             this.className.setState({ className });
+    //         }
+
+    //     }
+
+    // }
 
 
 
@@ -60,35 +116,13 @@ class CreatePlantForm extends React.PureComponent {
             difficulty,
             lastWatered,
             lastFertilized,
+            requiredExposureOptions,
+            requiredTemperatureOptions,
+            requiredHumidityOptions,
+            difficultyLevel,
 
         } = this.state;
 
-        const requiredExposureOptions = [
-            { value: 'dark', label: 'Dark' },
-            { value: 'shade', label: 'Shade' },
-            { value: 'partsun', label: 'Part sun' },
-            { value: 'sunny', label: 'Sunny' },
-        ];
-
-        const requiredTemperatureOptions = [
-            { value: 'cold', label: 'Cold' },
-            { value: 'medium', label: 'Medium' },
-            { value: 'warm', label: 'Warm' },
-        ];
-
-        const requiredHumidityOptions = [
-            { value: 'low', label: 'Low' },
-            { value: 'medium', label: 'Medium' },
-            { value: 'high', label: 'High' },
-        ];
-
-        const difficultyLevel = [
-            { value: 'low', label: 'Low' },
-            { value: 'medium-low', label: 'Medium-low' },
-            { value: 'medium', label: 'Medium' },
-            { value: 'medium-high', label: 'Medium-high' },
-            { value: 'high', label: 'High' },
-        ]
         return (
             <React.Fragment>
                 <h3>Add a new plant</h3>
@@ -96,78 +130,90 @@ class CreatePlantForm extends React.PureComponent {
                     <Label>Plant name:</Label>
                     <Input
                         type="text"
-                        name={name}
-                        onChange={this.inputOnChange}
+                        name="name"
+                        value={name}
+                        onChange={this.handleInputChange}
                     />
                     <Label>Plant category:</Label>
                     <Input
                         type="text"
-                        name={category}
-                        onChange={this.inputOnChange}
+                        name="category"
+                        value={category}
+                        onChange={this.handleInputChange}
                     />
                     <Label>Room:</Label>
                     <Input
                         type="text"
-                        name={room}
-                        onChange={this.inputOnChange}
+                        name="room"
+                        value={room}
+                        onChange={this.handleInputChange/*, this.isPalindrom*/}
                     />
                     <Label>Watering interval:</Label>
                     <Input
-                        type="number"
-                        name={wateringInterval}
-                        onChange={this.inputOnChange}
+                        type="text"
+                        name="wateringInterval"
+                        value={wateringInterval}
+                        onChange={this.handleInputChange}
                     />
                     <Label>Fertilizing interval:</Label>
                     <Input
-                        type="number"
-                        name={fertilizingInterval}
-                        onChange={this.inputOnChange}
+                        type=""
+                        name="fertilizingInterval"
+                        value={fertilizingInterval}
+                        onChange={this.handleInputChange}
                     />
                     <Label>Required exposure:</Label>
-                    <Input
-                        name={requiredExposure}
+                    <Select
                         type="select"
+                        name="requiredExposure"
+                        value={requiredExposure}
                         options={requiredExposureOptions}
-                        onChange={this.inputOnChange}
+                        onChange={this.handleSelectChange}
                     />
                     <Label>Required temperature:</Label>
-                    <Input
-                        name={requiredTemperature}
+                    <Select
                         type="select"
+                        name="requiredTemperature"
+                        value={requiredTemperature}
                         options={requiredTemperatureOptions}
-                        onChange={this.inputOnChange}
+                        onChange={this.handleSelectChange}
                     />
                     <Label>Required humidity:</Label>
-                    <Input
-                        name={requiredHumidity}
+                    <Select
                         type="select"
+                        name="requiredHumidity"
+                        value={requiredHumidity}
                         options={requiredHumidityOptions}
-                        onChange={this.inputOnChange}
+                        onChange={this.handleSelectChange}
                     />
                     <Label>Bloomig:</Label>
                     <Input
                         type="checkbox"
-                        name={blooming}
-                        onChange={this.inputOnChange}
+                        name="blooming"
+                        value={blooming}
+                        onChange={this.handleInputChange}
                     />
                     <Label>Difficulty:</Label>
-                    <Input
-                        name={difficulty}
+                    <Select
                         type="select"
+                        name="difficulty"
+                        value={difficulty}
                         options={difficultyLevel}
-                        onChange={this.inputOnChange}
+                        onChange={this.handleSelectChange}
                     />
                     <Label>Last watered:</Label>
                     <Input
                         type="text"
-                        name={lastWatered}
-                        onChange={this.inputOnChange}
+                        name="lastWatered"
+                        value={lastWatered}
+                        onChange={this.handleInputChange}
                     />
                     <Label>Last fertilized:</Label>
                     <Input
                         type="text"
-                        name={lastFertilized}
-                        onChange={this.inputOnChange}
+                        name="lastFertilized"
+                        value={lastFertilized}
+                        onChange={this.handleInputChange}
                     />
 
                     <Button type="submit">Submit new plant</Button>
@@ -177,6 +223,7 @@ class CreatePlantForm extends React.PureComponent {
         )
     }
 }
+
 
 CreatePlantForm.propTypes = {
     name: PropTypes.string,

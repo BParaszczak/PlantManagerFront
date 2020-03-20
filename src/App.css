@@ -21,3 +21,7 @@ body {
 Input {
   margin: 1em 0;
 }
+
+.is-palindrom {
+  border: 3px solid green;
+}
