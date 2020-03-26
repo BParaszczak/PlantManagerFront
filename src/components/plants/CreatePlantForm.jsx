@@ -11,6 +11,26 @@ const requiredExposureOptions = [
     { value: 'sunny', label: 'Sunny' },
 ];
 
+const requiredTemperatureOptions = [
+    { value: 'cold', label: 'Cold' },
+    { value: 'medium', label: 'Medium' },
+    { value: 'warm', label: 'Warm' },
+];
+
+const requiredHumidityOptions = [
+    { value: 'low', label: 'Low' },
+    { value: 'medium', label: 'Medium' },
+    { value: 'high', label: 'High' },
+];
+
+const difficultyLevel = [
+    { value: 'low', label: 'Low' },
+    { value: 'medium-low', label: 'Medium-low' },
+    { value: 'medium', label: 'Medium' },
+    { value: 'medium-high', label: 'Medium-high' },
+    { value: 'high', label: 'High' },
+];
+
 class CreatePlantForm extends React.PureComponent {
 
     constructor(props) {
@@ -30,24 +50,6 @@ class CreatePlantForm extends React.PureComponent {
             lastWatered: '',
             lastFertilized: '',
 
-            requiredTemperatureOptions: [
-                { value: 'cold', label: 'Cold' },
-                { value: 'medium', label: 'Medium' },
-                { value: 'warm', label: 'Warm' },
-            ],
-            requiredHumidityOptions: [
-                { value: 'low', label: 'Low' },
-                { value: 'medium', label: 'Medium' },
-                { value: 'high', label: 'High' },
-            ],
-            difficultyLevel: [
-                { value: 'low', label: 'Low' },
-                { value: 'medium-low', label: 'Medium-low' },
-                { value: 'medium', label: 'Medium' },
-                { value: 'medium-high', label: 'Medium-high' },
-                { value: 'high', label: 'High' },
-            ],
-
         }
     }
 
@@ -56,10 +58,10 @@ class CreatePlantForm extends React.PureComponent {
         this.setState({ [name]: value });
     }
 
-    handleSelectChange = (event) => {
-        const { target: { name, options } } = event;
-        this.setState({ [name]: options });
-    }
+    // handleSelectChange = (event) => {
+    //     const { target: { name, options } } = event;
+    //     this.setState({ [name]: options });
+    // }
 
     // inputOnChange = (event) => {
     //     this.setState({
@@ -113,7 +115,7 @@ class CreatePlantForm extends React.PureComponent {
             difficulty,
             lastWatered,
             lastFertilized,
-            difficultyLevel,
+
 
         } = this.state;
 
@@ -167,23 +169,31 @@ class CreatePlantForm extends React.PureComponent {
                                 (<option value={item.value} key={item.value}>{item.label}</option>
                                 ))
                         }
-
                     </Input>
-                    {/* <Label>Required temperature:</Label>
+                    <Label>Required temperature:</Label>
                     <Input
                         type="select"
                         name="requiredTemperature"
                         value={requiredTemperature}
-                        onChange={this.handleSelectChange}
-                    /> */}
-                    {/* <Label>Required humidity:</Label>
+                        onChange={this.handleInputChange}>
+                        {
+                            requiredTemperatureOptions.map(item =>
+                                (<option value={item.value} key={item.value}>{item.label}</option>
+                                ))
+                        }
+                    </Input>
+                    <Label>Required humidity:</Label>
                     <Input
                         type="select"
                         name="requiredHumidity"
                         value={requiredHumidity}
-                        options={requiredHumidityOptions}
-                        onChange={this.handleSelectChange}
-                    /> */}
+                        onChange={this.handleInputChange}>
+                        {
+                            requiredHumidityOptions.map(item =>
+                                (<option value={item.value} key={item.value}>{item.label}</option>
+                                ))
+                        }
+                    </Input>
                     <Label>Bloomig:</Label>
                     <Input
                         type="checkbox"
@@ -191,14 +201,19 @@ class CreatePlantForm extends React.PureComponent {
                         value={blooming}
                         onChange={this.handleInputChange}
                     />
-                    {/* <Label>Difficulty:</Label>
+                    <Label>Difficulty:</Label>
                     <Input
                         type="select"
                         name="difficulty"
                         value={difficulty}
-                        options={difficultyLevel}
-                        onChange={this.handleSelectChange}
-                    /> */}
+                        onChange={this.handleInputChange}>
+                        {
+                            difficultyLevel.map(item =>
+                                (<option value={item.value} key={item.value}>{item.label}</option>
+                                ))
+                        }
+                    </Input>
+
                     <Label>Last watered:</Label>
                     <Input
                         type="text"
